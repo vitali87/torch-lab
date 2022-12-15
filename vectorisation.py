@@ -1,6 +1,4 @@
-import math
 import time
-import numpy as np
 import torch
 
 n = 10_000
@@ -23,4 +21,3 @@ print(f"{t_2} seconds")
 
 # How much faster?
 print(f"vectorisation is faster {t_1/t_2} times")
-
