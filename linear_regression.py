@@ -7,10 +7,13 @@ from sklearn.metrics import r2_score
 number_of_features = 5
 n_samples = 1000
 test_size = 0.2
-data = datasets.make_regression(n_samples, number_of_features, n_informative=2, coef=True, bias=2)
+data = datasets.make_regression(
+    n_samples, number_of_features, n_informative=2, coef=True, bias=2
+)
 
 X_train, X_test, y_train, y_test = train_test_split(
-    data[0], data[1], test_size=test_size, random_state=42)
+    data[0], data[1], test_size=test_size, random_state=42
+)
 
 X_train = torch.from_numpy(X_train)
 y_train = torch.from_numpy(y_train)
@@ -22,7 +25,9 @@ y_test = torch.from_numpy(y_test)
 class LinearRegression(nn.Module):
     def __init__(self):
         super().__init__()
-        self.linear = nn.Linear(in_features=number_of_features, out_features=1, dtype=torch.float64)
+        self.linear = nn.Linear(
+            in_features=number_of_features, out_features=1, dtype=torch.float64
+        )
 
     def forward(self, x):
         return self.linear(x)
