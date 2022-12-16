@@ -1,13 +1,23 @@
 import torch
+from torchviz import make_dot
+
+# Some tensor methods
+# https://pytorch.org/docs/stable/torch.html
+
+# In-place operations for tensors
+# https://pytorch.org/docs/stable/tensors.html#torch.Tensor.add_
 
 # autograd
-x = torch.arange(4.0)
+
+# Initialise x with some values
+x = torch.arange(3.0)
 x.requires_grad_(True)
 
 print(x.grad)
 
 y = 2 * torch.dot(x, x)
 
+# gradient of a scalar-valued function y with respect to a vector is vector-valued and has the same shape as x
 y.backward()
 print(x.grad)
 
@@ -15,17 +25,23 @@ print(x.grad)
 print(x.grad == 4 * x)
 
 # Let's take another loss function
-x.grad.zero_()  # Reset the gradient
+
+# Reset the gradient as PyTorch does not automatically reset the gradient buffer when we record a new gradient
+x.grad.zero_()
+print(x.grad)
+
 y = x.sum()
 y.backward()
 
 # Backward for Non-Scalar Variables
+# deep learning frameworks vary in how they interpret gradients of non-scalar tensors
+# pytorch raises error - need to reduce to scalar
 x.grad.zero_()
 y = x * x
 y.backward(gradient=torch.ones(len(y)))  # Faster version: y.sum().backward()
 print(x.grad)
 
-# Detaching Computation
+# Detaching Computation - removing calculation outside the recorded computational graph
 # z = x * y and y = x * x
 x.grad.zero_()
 y = x * x
