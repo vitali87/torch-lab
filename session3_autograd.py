@@ -1,5 +1,4 @@
 import torch
-from torchviz import make_dot
 
 # Some tensor methods
 # https://pytorch.org/docs/stable/torch.html
@@ -25,7 +24,6 @@ print(x.grad)
 print(x.grad == 4 * x)
 
 # Let's take another loss function
-
 # Reset the gradient as PyTorch does not automatically reset the gradient buffer when we record a new gradient
 x.grad.zero_()
 print(x.grad)

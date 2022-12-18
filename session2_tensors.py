@@ -25,6 +25,8 @@ print(zeros_tensor.device)
 print(zeros_tensor.shape)
 
 torch.numel(zeros_tensor)
+if torch.cuda.is_available():
+    zeros_tensor.to("cuda")
 
 # We move our tensor to the GPU if available
 if torch.cuda.is_available():
@@ -39,7 +41,7 @@ tensor[:, 1] = 0
 tensor_cat_col = torch.cat([tensor, tensor, tensor], dim=1)
 tensor_cat_row = torch.cat([tensor, tensor, tensor], dim=0)
 
-tensor_cat_col2 = torch.cat(3* [tensor], dim=1)
+tensor_cat_col2 = torch.cat(3 * [tensor], dim=1)
 
 tensor1 = 4 * tensor
 y1 = tensor @ tensor1
