@@ -36,10 +36,10 @@ class LinearRegression(nn.Module):
 model = LinearRegression()
 
 mse_loss = nn.MSELoss()
-optimiser = torch.optim.SGD(model.linear.parameters(), lr=0.002)
+optimiser = torch.optim.SGD(model.parameters(), lr=0.002)
 
-
-n_epochs = 1000
+# Full batch SGD
+n_epochs = 100
 train_size = int(n_samples * (1 - test_size))
 for i in range(n_epochs):
     y_pred = model(X_train)
@@ -47,12 +47,50 @@ for i in range(n_epochs):
     optimiser.zero_grad()
     step_loss.backward()
     optimiser.step()
-    print(f"epoch {i}, Loss: {step_loss.item()}")
+    y_pred = model(X_test)
+    print(f"epoch {i}, Train Loss: {step_loss.item()}, Test R-Squared: {r2_score(y_test.detach().numpy(), y_pred.detach().numpy())}")
 
+# Estimated parameters
 for i in model.parameters():
     print(i)
 
 y_pred = model(X_test)
 print(f"R^2: {r2_score(y_test.detach().numpy(), y_pred.detach().numpy())}")
+
+# Real parameters were
+print(data[2])
+print("bias: 2")
+
+# Mini-batch SGD batch
+from torch.utils.data import DataLoader, TensorDataset
+
+train_dataset = TensorDataset(X_train, y_train)
+test_dataset = TensorDataset(X_test, y_test)
+
+batch_size = 64
+train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
+for i in range(n_epochs):
+    # training mini-batches
+    for batch, (X, y) in enumerate(train_dataloader):
+        y_pred = model(X)
+        step_loss = mse_loss(y_pred, y.reshape(len(y), -1))
+        optimiser.zero_grad()
+        step_loss.backward()
+        optimiser.step()
+        print(f"epoch {i}, batch {batch}, Loss: {step_loss.item()}")
+    # testing mini-batches
+    with torch.no_grad():
+        for batch, (X_t, y_t) in enumerate(test_dataloader):
+            y_pred = model(X_t)
+            print(f"epoch {i}, batch {batch}, r2_score: {r2_score(y_t.numpy(), y_pred.numpy())}")
+
+# mini-batch estimates
+print("mini-batch estimates")
+for i in model.parameters():
+    print(i)
+# Real parameters were
+print("Real parameters")
 print(data[2])
 print("bias: 2")
