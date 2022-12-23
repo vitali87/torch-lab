@@ -6,11 +6,11 @@ import torch
 # In-place operations for tensors
 # https://pytorch.org/docs/stable/tensors.html#torch.Tensor.add_
 
-# autograd
-
-# Initialise x with some values
 x = torch.arange(3.0)
 x.requires_grad_(True)
+# Initialise x with some values
+# x = torch.arange(3.0)
+
 
 print(x.grad)
 
@@ -18,6 +18,10 @@ y = 2 * torch.dot(x, x)
 
 # gradient of a scalar-valued function y with respect to a vector is vector-valued and has the same shape as x
 y.backward()
+
+# raises an error as we are calling backward twice on complicated function
+# print(f" y print {y.backward()}")
+
 print(x.grad)
 
 # check that matches
@@ -29,8 +33,9 @@ x.grad.zero_()
 print(x.grad)
 
 y = x.sum()
-y.backward()
 
+print(y.backward())
+print(y.backward())
 # Backward for Non-Scalar Variables
 # deep learning frameworks vary in how they interpret gradients of non-scalar tensors
 # pytorch raises error - need to reduce to scalar

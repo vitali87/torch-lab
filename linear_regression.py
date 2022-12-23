@@ -7,6 +7,7 @@ from sklearn.metrics import r2_score
 number_of_features = 5
 n_samples = 1000
 test_size = 0.2
+
 data = datasets.make_regression(
     n_samples, number_of_features, n_informative=2, coef=True, bias=2
 )
