@@ -35,12 +35,12 @@ class MultiClass(nn.Module):
                 out_features=4, dtype=torch.float64
             ),
             # nn.Dropout(p=0.2),
-            # nn.ReLU(),
+            nn.ReLU(),
             nn.Linear(
                 in_features=4,
                 out_features=4, dtype=torch.float64
             ),
-            # nn.ReLU(),
+            nn.ReLU(),
             nn.Linear(
                 in_features=4,
                 out_features=n_classes, dtype=torch.float64
