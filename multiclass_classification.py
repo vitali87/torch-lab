@@ -7,10 +7,9 @@ number_of_features = 5
 n_classes = 3
 n_samples = 1000
 test_size = 0.2
-data = datasets.make_classification(n_samples,
-                                    number_of_features,
-                                    n_classes=n_classes,
-                                    n_informative=3)
+data = datasets.make_classification(
+    n_samples, number_of_features, n_classes=n_classes, n_informative=3
+)
 
 X_train, X_test, y_train, y_test = train_test_split(
     data[0], data[1], test_size=test_size, random_state=42
@@ -31,21 +30,14 @@ class MultiClass(nn.Module):
         super().__init__()
         self.stack = nn.Sequential(
             nn.Linear(
-                in_features=number_of_features,
-                out_features=4, dtype=torch.float64
+                in_features=number_of_features, out_features=4, dtype=torch.float64
             ),
             # nn.Dropout(p=0.2),
             nn.ReLU(),
-            nn.Linear(
-                in_features=4,
-                out_features=4, dtype=torch.float64
-            ),
+            nn.Linear(in_features=4, out_features=4, dtype=torch.float64),
             nn.ReLU(),
-            nn.Linear(
-                in_features=4,
-                out_features=n_classes, dtype=torch.float64
-            ),
-            nn.Softmax(dim=1)
+            nn.Linear(in_features=4, out_features=n_classes, dtype=torch.float64),
+            nn.Softmax(dim=1),
         )
 
     def forward(self, x):
@@ -86,7 +78,9 @@ for i in range(n_epochs):
             y_test_pred = model(X_test)
             y_test_float = y_test_pred.double()
             test_loss = ce_loss(y_test_pred, y_test_float)
-        print(f"epoch {i}, batch {batch}, Train Loss: {step_loss.item()}, Test Loss {test_loss.item()}")
+        print(
+            f"epoch {i}, batch {batch}, Train Loss: {step_loss.item()}, Test Loss {test_loss.item()}"
+        )
         train_losses.append(step_loss.item())
         val_losses.append(test_loss.item())
 
@@ -99,8 +93,8 @@ print(y_test[:n_])
 
 plt.figure(figsize=(10, 5))
 plt.title("Training and Validation Loss")
-plt.plot(val_losses,label="val")
-plt.plot(train_losses,label="train")
+plt.plot(val_losses, label="val")
+plt.plot(train_losses, label="train")
 plt.xlabel("iterations")
 plt.ylabel("Loss")
 plt.legend()

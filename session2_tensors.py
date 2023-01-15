@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-data = [[1,4], [4,7]]
+data = [[1, 4], [4, 7]]
 x_data = torch.tensor(data)
 
 np_array = np.array(data)
@@ -13,7 +13,10 @@ x_ones = torch.ones_like(x_np)
 
 x_rand = torch.rand_like(x_np, dtype=torch.float)
 
-shape = (2,3,)
+shape = (
+    2,
+    3,
+)
 
 
 rand_tensor = torch.rand(shape)

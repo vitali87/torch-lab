@@ -49,7 +49,9 @@ for i in range(n_epochs):
     step_loss.backward()
     optimiser.step()
     y_pred = model(X_test)
-    print(f"epoch {i}, Train Loss: {step_loss.item()}, Test R-Squared: {r2_score(y_test.detach().numpy(), y_pred.detach().numpy())}")
+    print(
+        f"epoch {i}, Train Loss: {step_loss.item()}, Test R-Squared: {r2_score(y_test.detach().numpy(), y_pred.detach().numpy())}"
+    )
 
 # Estimated parameters
 for i in model.parameters():
@@ -85,7 +87,9 @@ for i in range(n_epochs):
     with torch.no_grad():
         for batch, (X_t, y_t) in enumerate(test_dataloader):
             y_pred = model(X_t)
-            print(f"epoch {i}, batch {batch}, r2_score: {r2_score(y_t.numpy(), y_pred.numpy())}")
+            print(
+                f"epoch {i}, batch {batch}, r2_score: {r2_score(y_t.numpy(), y_pred.numpy())}"
+            )
 
 # mini-batch estimates
 print("mini-batch estimates")

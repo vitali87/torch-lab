@@ -76,4 +76,3 @@ d.backward()
 
 # it's a linear function
 print(a.grad == d / a)
-
