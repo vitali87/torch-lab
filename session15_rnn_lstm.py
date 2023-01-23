@@ -1,11 +1,53 @@
+# Using RNN and LSTm for sentiment analysis
+
 import torch
 from torch import nn
+import pandas as pd
+from torch.nn import functional as F
+from collections import Counter
+from torchtext.data.utils import get_tokenizer
+from torchtext.vocab import build_vocab_from_iterator
+from torchtext.vocab import vocab
 
-X, W_xh = torch.randn(3, 1), torch.randn(1, 4)
-H, W_hh = torch.randn(3, 4), torch.randn(4, 4)
+data = pd.read_csv('AmazonReview.csv')
+data.head()
+data.dropna(inplace=True)
 
-print(torch.matmul(X, W_xh) + torch.matmul(H, W_hh))  # Or just X @ W_xh + H @ W_hh
-print(torch.matmul(torch.cat((X, H), 1), torch.cat((W_xh, W_hh), 0)))
+# 1,2,3->negative(i.e 0)
+data.loc[data['Sentiment'] <= 3, 'Sentiment'] = 0
+
+# 4,5->positive(i.e 1)
+data.loc[data['Sentiment'] > 3, 'Sentiment'] = 1
+
+################## if using english words#########
+tokenizer = get_tokenizer("basic_english")
+
+tokens = [tokenizer(doc) for doc in data.Review]
+##################################################
+
+D = []
+[D.extend(doc.split()) for doc in data.Review]
+
+counts = Counter(D)
+ordered_dict = counts.most_common()
+counts.values()
+counts.keys()
+
+idx_l = [i for i in range(len(counts))]
+idx_t = torch.tensor(idx_l)
+
+vv = vocab(counts)
+vv.lookup_tokens([342])
+vv.lookup_indices(['thought'])
+
+# voc = build_vocab_from_iterator(counts, specials=["<unk>"])
+# voc.lookup_tokens([2])
+#
+# words = [voc.lookup_tokens([i])[0] for i in range(len(voc))]
+# voc.lookup_indices(['$15'])
+# voc.lookup_token(0)
+
+A = F.one_hot(idx_t)
 
 
 class RNN(nn.Module):
