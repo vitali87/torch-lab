@@ -1,13 +1,16 @@
 # Using RNN and LSTm for sentiment analysis
-
+import numpy as np
 import torch
 from torch import nn
 import pandas as pd
 from torch.nn import functional as F
-from collections import Counter
+from collections import Counter, OrderedDict
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 from torchtext.vocab import vocab
+from torch.nn.utils.rnn import pad_sequence
+from sklearn.preprocessing import OneHotEncoder
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 data = pd.read_csv('AmazonReview.csv')
 data.head()
@@ -20,34 +23,61 @@ data.loc[data['Sentiment'] <= 3, 'Sentiment'] = 0
 data.loc[data['Sentiment'] > 3, 'Sentiment'] = 1
 
 ################## if using english words#########
-tokenizer = get_tokenizer("basic_english")
 
-tokens = [tokenizer(doc) for doc in data.Review]
+# tokenizer = get_tokenizer("basic_english")
+#
+# tokens = [tokenizer(doc) for doc in data.Review]
+# voc = build_vocab_from_iterator(tokens, specials=["<unk>"])
+# voc.lookup_tokens([0])
+# voc.lookup_indices(["it"])
+
 ##################################################
+MAX_VOCAB_SIZE = 25_000
+BATCH_SIZE = 64
 
 D = []
-[D.extend(doc.split()) for doc in data.Review]
+[D.extend(doc.split()) for doc in data['Review']]
 
 counts = Counter(D)
-ordered_dict = counts.most_common()
-counts.values()
-counts.keys()
+sorted_by_freq_tuples = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+ordered_dict = OrderedDict(sorted_by_freq_tuples[:MAX_VOCAB_SIZE])
+v1 = vocab(ordered_dict, specials=["<unk>", "<pad>"])
+v1.set_default_index(v1["<unk>"])
+idx = v1.get_stoi().values()
+vals = torch.from_numpy(np.fromiter(idx, dtype=int))
 
-idx_l = [i for i in range(len(counts))]
-idx_t = torch.tensor(idx_l)
+encoder = OneHotEncoder()
+encoder.fit(vals.reshape(-1, 1))
 
-vv = vocab(counts)
-vv.lookup_tokens([342])
-vv.lookup_indices(['thought'])
+V = [v1.lookup_indices(x.split()) for x in data.Review]
+padded_sentences = pad_sequence([torch.tensor(p) for p in V], batch_first=True, padding_value=1)
 
-# voc = build_vocab_from_iterator(counts, specials=["<unk>"])
+encoder.transform(torch.tensor(padded_sentences).reshape(-1, 1))
+
+A = F.one_hot(padded_sentences)
+
+# stoi = v1.get_stoi()
+# [stoi[word] for word in data.Review[0].split()]
+# idx_l = [i for i in range(len(counts))]
+# idx_t = torch.tensor(idx_l).to('cuda')
+
+# vv = vocab(counts)sorted_by_freq_tuples = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+# ordered_dict = OrderedDict(sorted_by_freq_tuples[:25_000])
+# v1 = vocab(ordered_dict, specials=["<unk>", "<pad>"])
+# v1.set_default_index(v1["<unk>"])
+
+# vv.lookup_tokens([342])
+# vv.lookup_indices(['thought'])
+
+# vocab(counts)
+# voc = build_vocab_from_iterator(data.Review, specials=["<unk>"], max_tokens=MAX_VOCAB_SIZE)
 # voc.lookup_tokens([2])
 #
 # words = [voc.lookup_tokens([i])[0] for i in range(len(voc))]
 # voc.lookup_indices(['$15'])
 # voc.lookup_token(0)
 
-A = F.one_hot(idx_t)
+# A = F.one_hot(idx_t, num_classes=len(idx_t)-1)
 
 
 class RNN(nn.Module):
