@@ -29,6 +29,7 @@ rnn = RNN(50, 20, 10)
 
 loss_fn = nn.MSELoss()
 
+
 batch_size = 10
 TIMESTEPS = 5
 
