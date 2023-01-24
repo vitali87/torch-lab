@@ -3,6 +3,7 @@ from torch import nn
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
+from torch.utils.data import DataLoader, TensorDataset
 
 number_of_features = 5
 n_samples = 1000
@@ -65,7 +66,7 @@ print(data[2])
 print("bias: 2")
 
 # Mini-batch SGD batch
-from torch.utils.data import DataLoader, TensorDataset
+
 
 train_dataset = TensorDataset(X_train, y_train)
 test_dataset = TensorDataset(X_test, y_test)

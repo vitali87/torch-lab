@@ -1,20 +1,21 @@
-# Using RNN and LSTm for sentiment analysis
+# Using RNN sentiment analysis
+
 import numpy as np
 import torch
 from torch import nn
 import pandas as pd
-from torch.nn import functional as F
 from collections import Counter, OrderedDict
-from torchtext.data.utils import get_tokenizer
-from torchtext.vocab import build_vocab_from_iterator
 from torchtext.vocab import vocab
 from torch.nn.utils.rnn import pad_sequence
 from sklearn.preprocessing import OneHotEncoder
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, TensorDataset
 
 data = pd.read_csv('AmazonReview.csv')
 data.head()
 data.dropna(inplace=True)
+data.reset_index(inplace=True,drop=True)
 
 # 1,2,3->negative(i.e 0)
 data.loc[data['Sentiment'] <= 3, 'Sentiment'] = 0
@@ -22,21 +23,26 @@ data.loc[data['Sentiment'] <= 3, 'Sentiment'] = 0
 # 4,5->positive(i.e 1)
 data.loc[data['Sentiment'] > 3, 'Sentiment'] = 1
 
-################## if using english words#########
+train_idx, test_idx, y_train, y_test = train_test_split(
+    data.index, data["Sentiment"], test_size=0.2, stratify=data["Sentiment"])
 
-# tokenizer = get_tokenizer("basic_english")
-#
-# tokens = [tokenizer(doc) for doc in data.Review]
-# voc = build_vocab_from_iterator(tokens, specials=["<unk>"])
-# voc.lookup_tokens([0])
-# voc.lookup_indices(["it"])
+y_train_np = np.array(y_train)
+y_test_np = np.array(y_test)
 
-##################################################
-MAX_VOCAB_SIZE = 25_000
+X_train = data.iloc[train_idx, 0]
+X_test = data.iloc[test_idx, 0]
+
+train_dataset = TensorDataset(torch.from_numpy(train_idx.to_numpy()), torch.from_numpy(y_train_np))
+test_dataset = TensorDataset(torch.from_numpy(test_idx.to_numpy()), torch.from_numpy(y_test_np))
+
+MAX_VOCAB_SIZE = 1_000
 BATCH_SIZE = 64
 
+train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
+
 D = []
-[D.extend(doc.split()) for doc in data['Review']]
+[D.extend(doc.split()) for doc in X_train]
 
 counts = Counter(D)
 sorted_by_freq_tuples = sorted(counts.items(), key=lambda x: x[1], reverse=True)
@@ -46,39 +52,10 @@ v1.set_default_index(v1["<unk>"])
 idx = v1.get_stoi().values()
 vals = torch.from_numpy(np.fromiter(idx, dtype=int))
 
-encoder = OneHotEncoder()
+encoder = OneHotEncoder(sparse_output=False)
 encoder.fit(vals.reshape(-1, 1))
 
-V = [v1.lookup_indices(x.split()) for x in data.Review]
-padded_sentences = pad_sequence([torch.tensor(p) for p in V], batch_first=True, padding_value=1)
-
-encoder.transform(torch.tensor(padded_sentences).reshape(-1, 1))
-
-A = F.one_hot(padded_sentences)
-
-# stoi = v1.get_stoi()
-# [stoi[word] for word in data.Review[0].split()]
-# idx_l = [i for i in range(len(counts))]
-# idx_t = torch.tensor(idx_l).to('cuda')
-
-# vv = vocab(counts)sorted_by_freq_tuples = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-# ordered_dict = OrderedDict(sorted_by_freq_tuples[:25_000])
-# v1 = vocab(ordered_dict, specials=["<unk>", "<pad>"])
-# v1.set_default_index(v1["<unk>"])
-
-# vv.lookup_tokens([342])
-# vv.lookup_indices(['thought'])
-
-# vocab(counts)
-# voc = build_vocab_from_iterator(data.Review, specials=["<unk>"], max_tokens=MAX_VOCAB_SIZE)
-# voc.lookup_tokens([2])
-#
-# words = [voc.lookup_tokens([i])[0] for i in range(len(voc))]
-# voc.lookup_indices(['$15'])
-# voc.lookup_token(0)
-
-# A = F.one_hot(idx_t, num_classes=len(idx_t)-1)
-
+FULL_VOCAB_SIZE = len(v1)
 
 class RNN(nn.Module):
     def __init__(self, data_size, hidden_size, output_size):
@@ -89,30 +66,48 @@ class RNN(nn.Module):
 
         self.i2h = nn.Linear(input_size, hidden_size)
         self.h2o = nn.Linear(hidden_size, output_size)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, data, last_hidden):
         input_ = torch.cat((data, last_hidden), 1)
         hidden_ = self.i2h(input_)
-        output_ = self.h2o(hidden_)
+        output_ = self.sigmoid(self.h2o(hidden_))
         return hidden_, output_
 
-
-rnn = RNN(50, 20, 10)
-
 loss_fn = nn.MSELoss()
+rnn = RNN(FULL_VOCAB_SIZE, FULL_VOCAB_SIZE, 1).to("cuda")
+optimiser = torch.optim.SGD(rnn.parameters(), lr=0.001)
 
-batch_size = 10
-TIMESTEPS = 5
+hidden = torch.zeros(BATCH_SIZE, FULL_VOCAB_SIZE).to("cuda")
+target = torch.zeros(BATCH_SIZE, 1).to("cuda")
 
-# Create some fake data
-batch = torch.randn(batch_size, 50)
-hidden = torch.zeros(batch_size, 20)
-target = torch.zeros(batch_size, 10)
+# max_len = 500
 
-loss = 0
-for i in range(TIMESTEPS):
-    hidden, output = rnn(batch, hidden)
-    current_loss = loss_fn(output, target)
-    loss += current_loss
-    print(f"TimeStep {i}, Current loss: {current_loss}, Cumulative loss {loss.item()}")
-loss.backward()
+for train_indices, y_train in train_dataloader:
+
+    X_train = data.iloc[train_indices, 0]
+
+    V = [v1.lookup_indices(x.split()) for x in X_train]
+
+    padded_sentences = pad_sequence([torch.tensor(p) for p in V], batch_first=True, padding_value=1)
+
+    # for i in range(padded_sentences.shape[0]):
+    #     padded_sentences[i] = nn.ConstantPad1d((0, max_len - padded_sentences[i].shape[0]), 1)(padded_sentences[i])
+
+    TIMESTEPS = len(padded_sentences[0])
+
+    G = torch.ones(BATCH_SIZE, TIMESTEPS, FULL_VOCAB_SIZE).to("cuda")
+    for i in range(BATCH_SIZE):
+        for j in range(TIMESTEPS):
+            G[i, j] = torch.tensor(encoder.transform(padded_sentences[i, j].reshape(-1, 1))[0])
+
+    for i in range(TIMESTEPS):
+        hidden, output = rnn(G[:,i], hidden)
+        if i == TIMESTEPS - 1:
+            loss = loss_fn(output, target)
+            print(f"TimeStep {i}, loss: {loss}")
+            optimiser.zero_grad()
+            loss.backward(retain_graph=True)
+            optimiser.zero_grad()
+            optimiser.step()
+            print(optimiser.param_groups)
