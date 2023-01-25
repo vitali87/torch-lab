@@ -93,7 +93,7 @@ optimiser = torch.optim.SGD(rnn.parameters(), lr=0.001)
 hidden = torch.zeros(BATCH_SIZE, FULL_VOCAB_SIZE, dtype=torch.double).to('cuda')
 target = torch.zeros(BATCH_SIZE, 1, dtype=torch.double).to('cuda')
 
-PADS = ("<pad> " * TIMESTEPS)[:-1]
+PADS = ["<pad>"] * TIMESTEPS
 G = torch.ones(BATCH_SIZE, TIMESTEPS, FULL_VOCAB_SIZE).to('cuda')
 
 for train_indices, y_train in train_dataloader:
@@ -102,7 +102,7 @@ for train_indices, y_train in train_dataloader:
     X_train = data.iloc[train_indices, 0]
 
     V = [v1.lookup_indices(x[:TIMESTEPS].split()) for x in X_train]
-    V.append(v1.lookup_indices(PADS.split()))
+    V.append(v1.lookup_indices(PADS)
 
     padded_sentences = pad_sequence([torch.tensor(p) for p in V], batch_first=True, padding_value=1)
 
