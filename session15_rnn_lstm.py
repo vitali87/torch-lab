@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader, TensorDataset
 data = pd.read_csv('AmazonReview.csv')
 data.head()
 data.dropna(inplace=True)
-data.reset_index(inplace=True,drop=True)
+data.reset_index(inplace=True, drop=True)
 
 # 1,2,3->negative(i.e 0)
 data.loc[data['Sentiment'] <= 3, 'Sentiment'] = 0
@@ -36,7 +36,7 @@ train_dataset = TensorDataset(torch.from_numpy(train_idx.to_numpy()), torch.from
 test_dataset = TensorDataset(torch.from_numpy(test_idx.to_numpy()), torch.from_numpy(y_test_np))
 
 MAX_VOCAB_SIZE = 1_000
-BATCH_SIZE = 64
+BATCH_SIZE = 16
 
 train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -47,9 +47,11 @@ D = []
 counts = Counter(D)
 sorted_by_freq_tuples = sorted(counts.items(), key=lambda x: x[1], reverse=True)
 ordered_dict = OrderedDict(sorted_by_freq_tuples[:MAX_VOCAB_SIZE])
+
 v1 = vocab(ordered_dict, specials=["<unk>", "<pad>"])
 v1.set_default_index(v1["<unk>"])
 idx = v1.get_stoi().values()
+tokens = v1.get_itos()
 vals = torch.from_numpy(np.fromiter(idx, dtype=int))
 
 encoder = OneHotEncoder(sparse_output=False)
