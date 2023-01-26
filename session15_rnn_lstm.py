@@ -11,7 +11,13 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, TensorDataset
 
-torch.autograd.set_detect_anomaly(True)
+# Hyper-params
+VOCAB_SIZE = 1000
+TIMESTEPS = 100
+BATCH_SIZE = 32
+LEARNING_RATE = 0.001
+
+# torch.autograd.set_detect_anomaly(True)
 
 # DATA
 data = pd.read_csv('AmazonReview.csv')
@@ -38,10 +44,6 @@ X_test = data.iloc[test_idx, 0]
 train_dataset = TensorDataset(torch.from_numpy(train_idx.to_numpy()).double(), torch.from_numpy(y_train_np))
 test_dataset = TensorDataset(torch.from_numpy(test_idx.to_numpy()).double(), torch.from_numpy(y_test_np))
 
-MAX_VOCAB_SIZE = 1_000
-TIMESTEPS = 500
-BATCH_SIZE = 16
-
 train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
@@ -50,7 +52,7 @@ D = []
 
 counts = Counter(D)
 sorted_by_freq_tuples = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-ordered_dict = OrderedDict(sorted_by_freq_tuples[:MAX_VOCAB_SIZE])
+ordered_dict = OrderedDict(sorted_by_freq_tuples[:VOCAB_SIZE])
 
 v1 = vocab(ordered_dict, specials=["<unk>", "<pad>"])
 v1.set_default_index(v1["<unk>"])
@@ -77,31 +79,33 @@ class RNN(nn.Module):
         self.i2h = nn.Linear(input_size, self.hidden_size, dtype=torch.double)
         self.h2o = nn.Linear(self.hidden_size, self.output_size, dtype=torch.double)
         self.sigmoid = nn.Sigmoid()
+        self.tanh = nn.Tanh()
 
     def forward(self, data_, last_hidden):
         input_ = torch.cat((data_, last_hidden), 1).double()
-        hidden_ = self.i2h(input_)
-        output_1 = self.h2o(hidden_)
-        output_ = self.sigmoid(output_1.clone())
+        hidden_ = self.tanh(self.i2h(input_))
+        # hidden_ = self.i2h(input_)
+        output_ = self.sigmoid(self.h2o(hidden_))
         return hidden_, output_
 
+loss_fn = nn.BCELoss()
+rnn = RNN(FULL_VOCAB_SIZE, FULL_VOCAB_SIZE//2, 1).to('cuda')
+optimiser = torch.optim.SGD(rnn.parameters(), lr=LEARNING_RATE)
 
-loss_fn = nn.BCEWithLogitsLoss()
-rnn = RNN(FULL_VOCAB_SIZE, FULL_VOCAB_SIZE, 1).to('cuda')
-optimiser = torch.optim.SGD(rnn.parameters(), lr=0.001)
-
-hidden = torch.zeros(BATCH_SIZE, FULL_VOCAB_SIZE, dtype=torch.double).to('cuda')
-target = torch.zeros(BATCH_SIZE, 1, dtype=torch.double).to('cuda')
+hidden = torch.zeros(BATCH_SIZE, FULL_VOCAB_SIZE//2, dtype=torch.double).to('cuda')
 
 PADS = ("<pad> " * TIMESTEPS)[:-1]
 G = torch.ones(BATCH_SIZE, TIMESTEPS, FULL_VOCAB_SIZE).to('cuda')
 
+counter = 0
 for train_indices, y_train in train_dataloader:
+    counter += 1
     y_train = y_train.to("cuda")
 
     X_train = data.iloc[train_indices, 0]
 
     V = [v1.lookup_indices(x[:TIMESTEPS].split()) for x in X_train]
+    # V = [v1.lookup_indices(x.split()) for x in X_train]
     V.append(v1.lookup_indices(PADS.split()))
 
     padded_sentences = pad_sequence([torch.tensor(p) for p in V], batch_first=True, padding_value=1)
@@ -110,13 +114,13 @@ for train_indices, y_train in train_dataloader:
         for j in range(TIMESTEPS):
             G[i, j] = torch.tensor(encoder.transform(padded_sentences[i, j].reshape(-1, 1))[0])
 
+    hidden2 = hidden
     for k in range(TIMESTEPS):
-        hidden, output = rnn(G[:, k], hidden)
-        if k == TIMESTEPS - 1:
-            loss = loss_fn(output, y_train.reshape(-1, 1))
-            # loss.to("cuda")
-            print(f"TimeStep {k}, loss: {loss}")
-            optimiser.zero_grad()
-            loss.backward(retain_graph=True)
-            optimiser.step()
-            print(optimiser.param_groups)
+        hidden2, output = rnn(G[:, k], hidden2)
+    loss = loss_fn(output, y_train.reshape(-1, 1))
+    loss.to("cuda")
+    print(f"Train loop {counter}, loss: {loss:.2f}")
+    optimiser.zero_grad()
+    loss.backward()# retain_graph=True
+    optimiser.step()
+    # print(optimiser.param_groups)
