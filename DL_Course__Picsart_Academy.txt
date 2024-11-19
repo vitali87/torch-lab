@@ -1,0 +1,575 @@
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Deep Learning Course
+Picsart Academy
+
+Vitali Avagyan
+Senior Data Scientist, TurinTech
+
+February 6, 2023
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Outline
+
+4
+1
+2
+3
+
+Outline
+Deep Learning
+What is PyTorch?
+
+Linear and
+Logistic
+Regressions as
+NNs
+
+5
+6
+7
+
+Deep Neural
+Networks
+Convolutional
+Neural Networks
+Recurrent Neural
+Networks
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 1
+
+Figure 1: Generated via Stable Diffusion, prompt "Panos Terlemezian’s style
+beautiful robot...
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Deep Learning
+
+What is Deep Learning?
+Deep learning is a specific subfield of machine learning: a new take
+on learning representations from data that puts an emphasis on
+learning successive layers of increasingly meaningful representations.
+The deep in deep learning isn’t a reference to any kind of deeper
+understanding achieved by the approach; rather, it stands for this
+idea of successive layers of representations.
+François Chollet in Deep Learning with Python, Second Edition
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Frameworks
+What is Deep Learning Framework?
+"Deep learning (DL) frameworks offer building blocks
+for designing, training, and validating deep neural
+networks through a high-level programming interface."
+Nvidia
+Most popular:
+PyTorch <– gaining momentum
+TensorFlow and Keras
+MXNet
+JAX <– gaining momentum
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Introduction: Recommended Material
+Chapter 1, Deep Learning with Python, Second Edition by
+François Chollet
+Chapter 1, Dive into Deep Learning by Zhang A. et al.
+YouTube: INTRODUCTION TO PYTORCH
+Chapter 1, Neural Networks and Deep Learning by Michael
+Nielsen
+Introduction, Deep Learning by Yoshua Bengio, Ian Goodfellow
+and Aaron Courville
+GitHub: Awesome Deep Learning
+Chapter 1, Deep Learning with PyTorch: A practical approach
+to building neural network models using PyTorch by Vishnu
+Subramanian
+Chapter 1, Deep Learning with PyTorch: Build, Train, and
+Tune Neural Networks Using Python Tools by Eli Stevens,
+Luca Antiga, Thomas Viehmann
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+What is PyTorch?
+
+"An open source machine learning framework that
+accelerates the path from research prototyping to
+production deployment"
+PyTorch Webpage
+Tensors
+Datasets, Dataloaders and Transforms
+Autograd
+Vectorisation
+Computational Graph
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+PyTorch Ecosystem Tools
+Python API
+Ecosystem Tools
+Lightning: Simplified PyTorch for Research
+pyro and numpyro: Deep Universal Probabilistic Programming
+BoTorch: Bayesian Optimization in PyTorch
+fastai: fastai simplifies training fast and accurate neural nets
+using modern best practices
+ONNX Runtime: Cross-platform inference and training
+machine-learning accelerator
+Transformers by HuggingFace
+Ray: A unified framework for scaling AI and Python
+applications
+PyTorch NLP: NLP library in Python
+detectron2: State-of-the-art object detection and segmentation
+algorithms
+Optuna: Hyperparameter optimization framework
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+PyTorch Ecosystem Libraries
+
+torchaudio: audio and signal processing
+torchvision: popular datasets, model architectures, and
+common image transformations for computer vision
+torchtext: data processing utilities and popular datasets for
+NLP
+torchserve: model serving
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Introduction to PyTorch, tensors, and operations
+What is Tensor?
+"A PyTorch Tensor is basically the same as a numpy
+array: it does not know anything about deep learning
+or computational graphs or gradients, and is just a
+generic n-dimensional array to be used for arbitrary
+numeric computation."
+Source: PYTORCH: TENSORS
+Torch tensor:
+Runs on either CPU or GPU
+For GPU, cast tensor to a cuda datatype
+More info on cuda python and accelerated computing
+
+Optimised for automatic differentiation; grad_fn property
+references the backward propagation function
+Get used to numpy library and numpy array before moving on!
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 2
+
+Figure 2: Generated via Stable Diffusion, prompt "Ivan Aivazovsky’s..."
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Tensors and Operations
+GitHub: tensors
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 3
+
+Figure 3: Generated via Stable Diffusion, prompt "Martiros Saryan’s..."
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Autograd and Vectorisation
+GitHub
+autograd
+vectorisation
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+PyTorch: Recommended Reading
+
+PyTorch Fundamentals and PyTorch Workflow Fundamentals
+in Learn PyTorch for Deep Learning: Zero to Mastery by
+Daniel Bourke
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 4 and Session 5
+
+Figure 4: Generated via Stable Diffusion, prompt "Arshile Gorky’s..."
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Linear and Logistic Regressions as Neural Nets
+Steps to build a Neural Net:
+Model
+Loss function
+Optimiser
+Training
+Hyperparameters for training:
+Number of Epochs - the number times to iterate over the
+dataset
+Batch Size - the number of data samples propagated through
+the network before the parameters are updated
+Learning Rate - how much to update models parameters at
+each batch/epoch (SGD for Linear Regression at MLU)
+Implementations:
+Linear Regression
+Logistic Regression
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Neural Networks: Recommended Reading
+
+Chapter 5: The Mechanics of Learning in Deep Learning with
+PyTorch by Eli Stevens et al.
+Chapter 2: How the backpropagation algorithm works and
+Chapter 3: Improving the way neural networks learn in Neural
+Networks and Deep Learning by Michael Nielsen
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 6
+
+Figure 5: Generated via Stable Diffusion, prompt "Minas Avetisyan’s..."
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Deep Neural Networks
+What is deep in Deep Neural Network?
+Let’s recall "the deep in deep learning isn’t a reference to any kind of
+deeper understanding achieved by the approach; rather, it stands for this
+idea of successive layers of representations."
+François Chollet in Deep Learning with Python, Second Edition
+Ingredients of common deep NN:
+Hidden Layers
+Activation Functions
+Sigmoid
+ReLU
+Tanh
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 7
+
+Figure 6: Generated via Stable Diffusion, prompt "Martiros Saryan’s..."
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Deep Neural Networks
+GitHub: Multiclass Classification
+Mathematics of Deep Neural Networks
+Element-wise Activation Functions
+Row-wise Activation Functions
+Normalization Layers
+Dropout Layers
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Homework 1
+Build a simple neural network using PyTorch to classify MNIST
+digits
+
+Figure 7: Sample of MNIST digits
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Multiclass Classification: Recommended Reading
+
+PyTorch Neural Network Classification in Learn PyTorch for
+Deep Learning: Zero to Mastery by Daniel Bourke
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 8
+
+Figure 8: Generated via Stable Diffusion, prompt "Minas Avetisyan’s..."
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Convolutional Neural Network (CNN)
+What is a convolution?
+Translation Invariance
+Locality
+Convolution Kernel (Filter) and Cross-Correlation Operation
+Edge Detector
+Padding and Strided Convolutions
+
+Figure 9: Where is Waldo?
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 9
+
+Figure 10: Generated via Stable Diffusion, prompt "Ivan Aivazovsky’s..."
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Channels in CNN
+What is a channel?
+Colour image input data might be a 3-dimensional tensor
+representing an image with height, width, and colour. The
+amount of red, green, and blue present is represented by the
+RGB colour channels that’s why the image has a shape 3xhxw
+Filters are applied to each channel separately
+Filters are designed to learn different features in the image
+Resulting outputs are combined to form the output of the
+convolutional layer
+Channels of an image are typically processed in parallel by
+different filters
+Multiple Input Channels
+Multiple Output Channels
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 10
+
+Figure 11: Generated via Stable Diffusion, prompt "A beautiful robot helping a
+human in 24the century painted by Martiros Saryan"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+CNN
+torchvision
+Datasets
+
+Open-CV
+MNIST
+GitHub
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 11
+
+Figure 12: Generated via DALL-E, prompt "A beautiful robot helping a cyborg
+in 24the century painted by Martiros Saryan"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Advances in Deep Learning & Big CNN Models
+1995: LeNet
+Advances in GPU
+GPU is good for massively parallel processing for repeatable,
+identical computations
+CPU is good for processing multiple, more complex
+computations at the same time
+
+2012 : AlexNet
+2013: NiN
+2014: VGG
+2014: GoogLeNet
+2015: Batch Normalization and 2016: Layer Normalization
+2016: ResNet and 2017: ResNeXt
+2017: DenseNet
+2018: Neural Architecture Search (NAS) and 2019:
+EfficientNets
+2020: RegNet
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Convolutional Neural Networks: Recommended Reading
+Chapter 7: Convolutional Neural Networks, Chapter 8:
+Modern Convolutional Neural Networks in Dive into Deep
+Learning by Zhang Aston et al.
+Chapter 7 Telling birds from airplanes: Learning from
+images and Chapter 8 Using convolutions to generalize in
+Deep Learning with PyTorch by Eli Stevens et al.
+Chapter 6: Deep Learning in Neural Networks and Deep
+Learning by Michael Nielsen
+PyTorch Computer Vision in Learn PyTorch for Deep
+Learning: Zero to Mastery by Daniel Bourke
+Figure 13: Kernel, Locality and Translation Invariance
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 12
+
+Figure 14: Generated via DALL-E, prompt "A beautiful robot walking on a
+street in 24the century painted by Minas Avetsiyan"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Recurrent Neural Networks (RNNs): Introduction
+What is a Sequence?
+Autoregressive Models
+Sequence Models
+Markov Models
+Conditional Probability
+
+Time Series
+Language Models
+RNN: A Visual Explanation
+The Vanishing Gradient problem
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+RNNs: Recommended Reading
+
+Chapter 13.1: Markov Models in Pattern Recognition and
+Machine Learning by Christopher Bishop
+Chapter 13.2: Hidden Markov Models in Pattern Recognition
+and Machine Learning by Christopher Bishop
+Chapter 9: Recurrent Neural Networks in Dive into Deep
+Learning by Zhang Aston et al.
+Chapter 5: Why are deep neural networks hard to train? in
+Neural Networks and Deep Learning by Michael Nielsen
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 13
+
+Figure 16: Generated via Stable Diffusion, prompt "When humans and robots
+live in peace in 24the century painted by Gevorg Bashinjaghian"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+RNN: Implementations
+
+PyTorch’s RNN module
+Classifying Names with a Character-level RNN
+
+RNN from scratch
+GitHub
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 14
+
+Figure 17: Generated via Stable Diffusion, prompt "When humans and robots
+live in peace in 27the century, Armenian motifs
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+More Efficient RNN Variants
+Long Short-Term Memory (LSTM)
+PyTorch’s LSTM module
+
+Gated Recurrent Units (GRU)
+PyTorch’s GRU module
+
+LSTM and GRU: A Visual Explanation
+
+Figure 18: Memory Cell of LSTM
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 15
+
+Figure 19: Generated via Stable Diffusion, prompt "A cute robot walking on the
+streets of Yerevan City and conversing with people, Yervand Kochar painting"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+RNN & LSTM in more detail
+GitHub
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Sentiment Analysis: Recommended Resources
+
+pytorch-sentiment-analysis
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 16
+
+Figure 20: Generated via Stable Diffusion, prompt "A cute robot walking on
+the streets of Yerevan City and conversing with people, Mariam Aslamazyan
+style painting"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Encoder-Decoder Architecture
+What is Encoder-Decoder Architecture?
+
+Variable-length input -> variable-length output
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Encoder-Decoder Architecture: Recommended Reading
+
+10.6. Encoder-Decoder Architecture in Dive into Deep
+Learning by Zhang Aston et al.
+10.7. Encoder-Decoder Seq2Seq for Machine Translation in
+Dive into Deep Learning by Zhang Aston et al.
+10.8. Beam Search in Dive into Deep Learning by Zhang
+Aston et al.
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 17
+
+Figure 21: Generated via Stable Diffusion, prompt "A cute robot walking on
+the streets of Yerevan City and conversing with people, Mariam Aslamazyan
+style painting"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Attention Mechanism
+What is an Attention?
+
+Figure 22: Bahdanau’s Attention Mechanism
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Attention Mechanism: Recommended Reading
+Visualizing A Neural Machine Translation Model (Mechanics of Seq2seq
+Models With Attention) by Jay Alamaar
+11.1. Queries, Keys, and Values in Dive into Deep Learning by Zhang
+Aston et al.
+11.2. Attention Pooling by Similarity in Dive into Deep Learning by
+Zhang Aston et al.
+11.3. Attention Scoring Functions in Dive into Deep Learning by Zhang
+Aston et al.
+11.4. The Bahdanau Attention Mechanism in Dive into Deep Learning by
+Zhang Aston et al.
+11.5. Multi-Head Attention in Dive into Deep Learning by Zhang Aston
+et al.
+11.6. Self-Attention and Positional Encoding in Dive into Deep Learning
+by Zhang Aston et al.
+Attention Is All You Need by Ashish Vaswani et. al.
+Attention Mechanism in Modern Deep Learning Techniques Applied to
+Natural Language Processing
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Session 18
+
+Figure 23: Generated via Stable Diffusion, prompt "When Robots learning
+Deep Learning in Armenia, Lavinia Bazhbeuk-Melikyan style painting"
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Introduction to Transformers
+What is a Transformer?
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Transformers: Recommended Reading
+
+The Illustrated Transformer by Jay Alamaar
+11.7. The Transformer Architecture in Dive into Deep
+Learning by Zhang Aston et al.
+11.8. Transformers for Vision in Dive into Deep Learning by
+Zhang Aston et al.
+11.9. Large-Scale Pretraining with Transformers in Dive into
+Deep Learning by Zhang Aston et al.
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Deep Learning: Additional Recommended Resources
+Neural Networks: Zero to Hero by Andrej Karpathy
+Natural Language Processing by Ritvik Kharkar (ritvikmath)
+deeplearning-models
+Visual ML papers: distill
+List of various awesome Deep Learning resources:
+awesome-deep-learning
+applied-ml
+Best-of Machine Learning with Python
+Two Minute Papers
+PyTorch
+Jay Alammar’s YouTube Channel and blog
+
+Outline Deep Learning What is PyTorch? Linear and Logistic Regressions as NNs Deep Neural Networks Convolution
+
+Good Luck
+
+Figure 24: Generated via Stable Diffusion, prompt "Robots saying "Good luck"
+to new learners and waving their hands, Zuleika Bazhbeuk-Melikyan style
+painting"
+
+
